@@ -26,6 +26,14 @@ export class AuthService {
 	}
 
 	public async login(user: UserInterface) {
-		return await this.userService.login(user);
+		const code = await this.userService.login(user);
+		if (code === `OK`) {
+			const [refresh, access] = this.generateTokens(user.email);
+			const u = await this.userService.findUserByEmail(user.email);
+			u.refreshToken = refresh;
+			await this.userService.updateUser(u);
+			return {state: `OK`, access: access, refresh: refresh};
+		}
+		return {state: code};
 	}
 }

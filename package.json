@@ -2,9 +2,9 @@
   "name": "user",
   "version": "0.1.0",
   "description": "",
-  "author": "",
+  "author": "Jourloy",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
