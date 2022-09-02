@@ -1,0 +1,32 @@
+name: Deploy to server
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2.4.0
+            - name: Pull and run
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  port: ${{ secrets.PORT }}
+                  password: ${{ secrets.PASSWORD }}
+                  script_stop: true
+                  script: |
+                    cd ${{ secrets.FOLDER }}
+                    docker-compose down
+                    > .env
+                    echo RMQ_HOST=${{ secrets.RMQ_HOST }} >> .env
+                    echo MONGO_HOST=${{ secrets.MONGO_HOST }} >> .env
+                    echo RMQ_PORT=${{ secrets.RMQ_PORT }} >> .env
+                    git pull
+                    docker-compose up -d --build
